@@ -69,6 +69,7 @@
   2. 需要显式管理版本控制机制.
 
 
+
 #### 5. Java虚拟机(JVM)垃圾回收(GC)机制和常见垃圾收集器
 
 ##### GC Roots：
@@ -153,4 +154,33 @@ JVM内存结构指的是JVM运行时数据区结构，它主要包含以下几�
 * `本地方法栈`（Native Method Stack）：线程私有
   * 类似虚拟机栈, 但服务于本地方法的调用。
 * `程序计数器（Program Counter Register）`：**线程私有**
-    * 可看作是当前线程所执行的字节码的行号指示器。
+  * 可看作是当前线程所执行的字节码的行号指示器。
+
+#### 8. JVM、JRE和JDK的关系是什么
+
+![图 3](images/070c46bdc0598d2ead1045fb783b4df272345e2d8694ca3932923c65f4e629bb.png)  
+
+* `JVM`: **Java Virtual Machine** Java虚拟机
+  * JVM 是一个运行在操作系统之上的虚拟机，用于执行javac（Java编译器）将Java代码(.java)转换而来的字节码(.class)
+  * JVM 读取字节码并生成机器特定代码。为了生成特定于机器的代码(最后交给本机CPU执行)，JVM 需要是特定于机器的。因此每种类型的机器（Windows / Linux / Mac）都有一个特定的 JVM。
+  * JVM 提供了Java的可移植性
+* `JRE`: **Java Runtime Environment** Java运行环境 = JVM + 运行应用程序所需的库。
+  * 如果您只需要运行已编译的 Java 程序，但不需要开发它们，那么 JRE 就是您所需要的
+* `JDK`: **Java Development Kit** Java开发工具包 = JRE + 开发Java应用程序所需的工具和库。
+  * 工具包括编译器（javac）、调试器(Java Debugge)、文档生成器(JavaDoc)等
+
+
+#### 9. Java string 特性
+
+* 不能被继承： String类是final修饰的，不能被继承（final修饰的类不能被继承，修饰的方法不能被重写，修饰的变量为常量。）
+* 设计成不可变的原因：
+  * `字符串常量池的设计`：JVM堆中字符串常量池的存在，多个字符串对象可以共享同一个字符串常量，减少内存占用。
+  * `安全性`: 防止被攻击修改
+  * `提高缓存利用率和性能`： 能被多个线程安全共享，不需要额外的同步措施
+* 实际使用中如果需要进行字符串拼接等操作，可以使用`StringBuilder`或`StringBuffer`类, 其中StringBuffer是线程安全的。
+
+
+#### 10. Array和ArrayList 区别
+
+* `Array` 是一种静态数据结构，长度固定, 在声明时需要指定长度，可以存储基本类型和对象类型，不支持泛型
+* `ArrayList` 动态数组，长度可以动态扩容，只能包含对象类型，支持泛型，有许多实用API, 线程不安全，如需安全可使用List接口下的另一个`vector`, 它在每个方法上都使用了synchronized关键字进行同步锁。
