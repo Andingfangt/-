@@ -203,3 +203,50 @@ public:
 };
 //访问的时候通过，Person::BOY或者Person::GIRL来进行访问。
 ```
+
+#### 4. 智能指针
+
+|智能指针|类型|
+|:--:|:--:|
+|`shared_ptr`|共享指针，多个共享指针可以指向同一个对象|
+|`weak_ptr`|该指针是对象的一个非拥有性引用，指向一个shared_ptr，主要用来避免shared_ptr环形依赖|
+|`unique_ptr`|该指针独占对象的所有权，每个对象智能有一个该指针|
+
+**shared_ptr**:
+
+* 智能指针内部有一个计数器，当赋值给别的智能指针或者函数传参拷贝到另一个shared_ptr，计数器就会加1，当函数执行完毕，智能指针对象 就被析构了，此时计数器就会减一，知道计数器变为0 ，说明没人在用这个对象了，就执行delete把它释放掉。
+* 线程不安全，读安全，写不安全，要加锁保证线程安全
+
+```C++
+p = make_shared<Objcet>(Objcet);//此为推荐方式
+auto p2 = p; // 复制指针
+cout << p.use_count() << endl; // use_count()，得到当前有多少个指针指向该对象
+Objcet* rp = p.get()    // get()，获得裸指针, 尽可能避免裸指针和共享指针同时使用, 共享指针释放后裸指针变成未定义
+```
+
+**weak_ptr**：
+
+* 环形依赖：两个或多个对象相互持有对方的智能指针（通常是shared_ptr）时，它们之间的引用计数将永远无法降到零，引发内存泄漏；通过使用weak_ptr代替其中一个或多个shared_ptr，可以打破这种循环引用，确保对象在不再需要时能够被正确销毁。
+* week_ptr本身依赖shared_ptr存在,存储一个资源的引用但不能修改，只能告知资源是否存在
+  
+```C++
+auto sp = make_shared<int>(100);
+wp = sp;
+auto resource = wp.lock(); // lock()，返回shared_ptr地址指针，若对象已被释放，则返回nullptr
+if (resource) {
+    cout << "Number is" << *resource << endl;
+} else {
+    cout << "wp is expired" << endl;
+}
+```
+
+**unique_ptr**
+
+* unique_ptr是独享的，不可以两个unique_ptr同时指向同一份资源
+* 由于独占资源控制权，所以不支持普通拷贝，但可以转移控制权
+
+```C++
+auto up1 = make_unique<int>(100);
+auto up2(up1.release());//方式1：转移控制权
+auto up3 = std::move(up1);//方式2：转移控制权
+```
