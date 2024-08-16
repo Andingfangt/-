@@ -283,7 +283,7 @@ class A extends B {
 
 **抽象类：**
 
-在Java中，当用`abstract`关键字来修饰一个类时，这个类被称为抽象类, 抽象类可以有常量也可以有变量，可以有抽象方法也可有非抽象方法。
+在Java中，当用`abstract`关键字来修饰一个类时，这个类被称为抽象类, 抽象类可以有常量也可以有变量，可以有抽象方法也可有非抽象方法。**不能被实例化**
 
 ```java
 public abstract class Geometry {
@@ -303,7 +303,7 @@ public class Rectangle extends Geometry{
 
 **接口：**
 
-接口是一种特殊的抽象类，类似于C/C++的$.h$文件，但更严格，接口中**只能包含常量和抽象方法的定义**，而没有变量和具体方法的实现。在Java中，接口是通过`interface`关键字来定义
+接口是一种特殊的抽象类，类似于C/C++的$.h$文件，但更严格，接口中**只能包含常量和抽象方法的定义**，而没有变量和具体方法的实现。在Java中，接口是通过`interface`关键字来定义, **不能被实例化**。
 
 ```java
 public interface Geometry {}
