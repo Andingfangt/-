@@ -343,24 +343,20 @@ static int n; //定义静态全局变量
 
 区别：
 
-* 全局变量是**所有程序都可见**的变量，在一个文件内定义的全局变量，在另一个文件中，通过 extern 全局变量名的声明，就可以使用全局变量。
+* 全局变量是**所有程序都可见**的变量，在一个文件内定义的全局变量，在另一个文件中，通过 **extern** 全局变量名的声明，就可以使用全局变量。
+
+注：如果需要在多个源文件中使用相同的全局变量，可以在头文件中使用extern关键字声明全局变量，然后在一个源文件中定义它。这样，包含该头文件的其他源文件就可以访问这个全局变量。如果在未声明extern或直接在.h文件中定义了该全局变量，在多个源文件中引入头文件的情况下则会出现重定义ORD错误.
 
 ```C++
-// file1.cpp
-#include <iostream>
-using namespace std;
-// 全局变量定义
-int g_var = 10;
+// global_variables.h
+extern int globalVar;  // 声明全局变量
+// extern int globalVar = 10 // 错误，不因在头文件定义
+// int globalVar //错误，未声明extern
 
-// file2.cpp
-#include <iostream>
-using namespace std;
-// 使用extern关键字来声明全局变量
-extern int g_var;
-int main() {
-    cout << "Global variable value: " << g_var << endl;
-    return 0;
-}
+// global_variables.cpp
+int globalVar = 42;  // 定义全局变量
+
+// 其他文件只需包含头文件即可使用全局变量，而不会引起重复定义错误, 也不要重复定义。
 ```
 
 * 静态全局变量的作用域是**声明此变量所在的文件**，其他的文件即使用 extern 声明也不能使用。其它文件中可以定义相同名字的变量，不会发生冲突，减少了全局命名空间的污染。考虑到数据安全性（当程序想要使用全局变量的时候应该先考虑使用 static）
