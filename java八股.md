@@ -314,3 +314,6 @@ public interface Geometry {}
 ```java
 public class Circle implements Geometry {}
 ```
+
+## 常见的设计模式
+
