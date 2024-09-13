@@ -573,12 +573,27 @@ public class Circle implements Geometry {}
 
 ## 线程
 
-### wait()和sleep()的区别：
+### wait()和sleep()的区别
 
 1. sleep是线程中的方法，使当前线程休眠一定时间；wait是Object中的方法，要执行wait方法，线程必须持有锁，调用obj.wait()使当前持有obd对象同步锁的线程进行等待. (把线程放到等待队列中), 并释放该锁，之后被notify唤醒后尝试重新获得锁并继续执行剩余代码。
 2. sleep方法不会释放lock，wait会释放，而且会加入到等待队列中。
 3. sleep方法不依赖于同步器synchronized，但是wait需要依赖synchronized关键字。
 4. sleep不需要被唤醒（休眠之后推出阻塞），但是wait需要（不指定时间需要被别人中断或唤醒）。
+
+### join()
+
+**理解为调用join的线程插队优先执行**
+join() 方法的作用就是：将调用join的线程优先执行，当前正在执行的线程阻塞，直到调用join方法的线程执行完毕或者被打断，主要用于线程之间的交互。
+
+### yeild()
+
+**线程运行状态转换：**
+![图 14](images/0fc7339ad02d1d7e98df521abfb741575c4e526d66fc3848281760dd05e3709c.png)  
+
+Thread.yield()方法作用： 让当前线程从运行状态转为就绪状态，以允许具有相同优先级的其他线程获得运行机会。
+
+* 它仅能使一个线程从运行状态转到可运行状态，而不是等待或阻塞状态。
+* 无法保证yield()达到让步目的，因为让步的线程还有可能被线程调度程序再次选中。
 
 ### 线程状态和生命周期
 
@@ -614,6 +629,7 @@ public State getState()
 |TIME_WATTING|限期等待的线程处于此状态|`Thread.sleep()` <br> 超时的`Thread.join()` <br> 超时的`Object.wait()` <br> 超时的`Condition.await()` <br> 超时的`LockSupport.park()`|
 |TERMINATED|已退出的线程处于此状态|线程执行结束(正常结束，异常结束)|
 
+**Java线程状态：**
 ![图 11](images/312b6f54999cbc0bf2778d4d4e36fbd3c005cf9776bc6b0cd34e33ce1905dd1d.png)  
 
 
@@ -812,10 +828,50 @@ class ThreadPoolExecutor extends AbstractExecutorService {
 ![图 13](images/085a3e5a1b73b1978d926d4a884b189ebab9ae31d083f6a94acf7abacacc1fa2.png)  
 
 
+### 线程池批量加载任务invoke
 
+```java
+List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
+List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks，long timeout，TimeUnit unit)
+T invokeAny(Collection<? extends Callable<T>> tasks)
+T invokeAny(Collection<? extends Callable<T>> tasks，long timeout,TimeUnit unit)
+```
 
+* invokeAll 返回所有完成任务的结果的集合
+* invokeAny 返回最先完成的任务的结果
 
+### 调度线程池`ScheduledThreadPoolExecutor`
 
+**具有执行定时，延时，周期性任务的线程池**
 
+使用schedule提交延迟任务，延迟任务传入参数delay
+使用scheduleAtFixedRate安排周期执行任务,参数传入延迟时间delay和周期执行period
+使用scheduleAtFixedDelay安排以固定间隔时间执行任务,间隔时间指上一次任务执行完到下一次任务开始执行之间的时间。参数传入初始延迟initialDelay和之后的间隔时间delay
 
+**常用于定期日志归档和爬虫任务。**
 
+### ForkJoin框架
+
+ForkJoin是一个把大任务分割成若干个小任务，再对每个小任务得到的结果进行汇总，得到大任务结果的框架。
+
+|类|描述|
+|--|--|
+|ForkJoinPool|ForkJoin线程池|
+|ForkJoinTask|职责相当于Future|
+|RecursiveTask|有返回值任务|
+|RecursiveAction|无返回值任务|
+
+### CompletionService
+
+按照任务完成先后顺序返回结果
+
+### 如何监控线程池
+
+|方法|描述|
+|---|---|
+|`getActiveCount()`| 获取正在工作的线程数|
+|`getPoolSize()`|获取当前存在的线程数|
+|`getLargestPoolSize()`|获取历史最大的线程数|
+|`getTaskCount()`|获取已提交的任务数|
+|`getCompletedTaskCount()`|获取已完成的任务数|
+|`getQueue`|获取任务队列|
