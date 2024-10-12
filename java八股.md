@@ -61,7 +61,7 @@ public V put(K key, V value) {
 * 第一种情况：如果table数组需要被创建。
 如果table数组为null或者长度为0，则创建table数组。
 
-* 第二种情况：如果寻址后的位置没有被占用。
+* 第二种情况：如果寻址后的位置的头节点为空。
 创建Node节点，cas插入到这个位置
 
 * 第三种情况：如果寻址后的位置是正在迁移状态。
@@ -875,3 +875,7 @@ ForkJoin是一个把大任务分割成若干个小任务，再对每个小任务
 |`getTaskCount()`|获取已提交的任务数|
 |`getCompletedTaskCount()`|获取已完成的任务数|
 |`getQueue`|获取任务队列|
+
+
+## java内存泄漏
+
